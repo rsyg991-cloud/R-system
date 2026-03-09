@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة الإدارة — دورة الإحصاء</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0f18; --surface:#12161f; --card:#181c2a; --border:#1e2535;
+    --accent:#f59e0b; --accent2:#fb923c; --blue:#4f8ef7; --green:#6ee7b7;
+    --text:#e8eaf6; --muted:#6b7280; --danger:#f87171;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;}
+
+  /* LOGIN */
+  #loginPage{display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse at 40% 30%,#2a1a08,#0c0f18 70%);}
+  .login-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:48px 44px;width:100%;max-width:400px;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:fadeUp .5s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .login-logo{width:64px;height:64px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px;}
+  .login-title{text-align:center;font-size:22px;font-weight:700;margin-bottom:4px;}
+  .login-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:28px;}
+  .security-badge{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:var(--accent);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;margin-bottom:22px;}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:500;}
+  input[type=email],input[type=password],input[type=text],select,textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:15px;padding:12px 16px;margin-bottom:16px;outline:none;transition:border-color .2s;direction:rtl;}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+  select option{background:var(--surface);}
+  .btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a0a00;border:none;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;padding:14px;cursor:pointer;transition:opacity .2s,transform .1s;margin-top:4px;}
+  .btn-primary:hover{opacity:.9;transform:translateY(-1px);}
+  .btn-sm{padding:8px 18px;font-size:13px;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .15s;}
+  .btn-accent{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1a0a00;}
+  .btn-blue{background:rgba(79,142,247,.15);color:var(--blue);border:1px solid rgba(79,142,247,.3);}
+  .btn-red{background:rgba(248,113,113,.1);color:var(--danger);border:1px solid rgba(248,113,113,.25);}
+  .error-msg{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--danger);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none;}
+
+  /* LAYOUT */
+  #adminApp{display:none;}
+  .layout{display:flex;min-height:100vh;}
+  .sidebar{width:260px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:10;}
+  .sidebar-head{padding:24px 20px 16px;border-bottom:1px solid var(--border);}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .brand-name{font-weight:700;font-size:15px;}
+  .brand-sub{font-size:11px;color:var(--muted);}
+  .sidebar-nav{flex:1;padding:14px 12px;overflow-y:auto;}
+  .nav-section-title{font-size:11px;color:var(--muted);letter-spacing:.08em;padding:10px 8px 6px;font-weight:700;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;font-size:14px;color:var(--muted);transition:all .15s;margin-bottom:2px;}
+  .nav-item:hover{background:var(--card);color:var(--text);}
+  .nav-item.active{background:rgba(245,158,11,.1);color:var(--accent);font-weight:600;}
+  .nav-item .icon{font-size:16px;width:20px;text-align:center;}
+  .sidebar-footer{padding:14px;border-top:1px solid var(--border);}
+  .user-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border-radius:10px;}
+  .avatar-admin{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#1a0a00;flex-shrink:0;}
+  .user-info{flex:1;}
+  .user-name{font-size:13px;font-weight:600;}
+  .user-role{font-size:11px;color:var(--accent);font-weight:600;}
+  .logout-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;transition:color .2s;}
+  .logout-btn:hover{color:var(--danger);}
+  .main{margin-right:260px;flex:1;}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;}
+  .topbar-left{display:flex;flex-direction:column;gap:2px;}
+  .topbar-title{font-size:18px;font-weight:700;}
+  .topbar-sub{font-size:13px;color:var(--muted);}
+  .content{padding:28px;}
+  .badge-pill{border-radius:20px;padding:5px 14px;font-size:13px;font-weight:600;}
+  .badge-warn{background:rgba(245,158,11,.1);color:var(--accent);border:1px solid rgba(245,158,11,.25);}
+  .badge-blue{background:rgba(79,142,247,.1);color:var(--blue);border:1px solid rgba(79,142,247,.25);}
+  .badge-green{background:rgba(110,231,183,.1);color:var(--green);border:1px solid rgba(110,231,183,.25);}
+
+  /* STATS */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;}
+  .stat-num{font-size:36px;font-weight:900;}
+  .stat-label{font-size:12px;color:var(--muted);margin-top:4px;}
+  .stat-card.orange .stat-num{color:var(--accent);}
+  .stat-card.blue .stat-num{color:var(--blue);}
+  .stat-card.green .stat-num{color:var(--green);}
+
+  /* TABLE */
+  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+  .data-table{width:100%;border-collapse:collapse;}
+  .data-table th{text-align:right;padding:13px 16px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--border);font-weight:700;}
+  .data-table td{padding:14px 16px;font-size:14px;border-bottom:1px solid rgba(30,37,53,.8);vertical-align:middle;}
+  .data-table tr:hover td{background:rgba(245,158,11,.02);}
+  .data-table tr:last-child td{border-bottom:none;}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:fadeUp .3s ease;}
+  .modal-title{font-size:18px;font-weight:700;margin-bottom:4px;}
+  .modal-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+  .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:12px;}
+
+  .section-title{font-size:16px;font-weight:700;margin-bottom:14px;}
+  .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .empty-state{text-align:center;padding:48px 20px;color:var(--muted);}
+  .empty-state .big-icon{font-size:44px;margin-bottom:12px;}
+  .empty-state p{font-size:14px;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--accent);color:#1a0a00;padding:12px 26px;border-radius:10px;font-weight:800;font-size:14px;z-index:200;transition:transform .3s ease;pointer-events:none;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+
+  .url-hint{font-size:11px;color:var(--muted);margin-top:-10px;margin-bottom:14px;padding-right:2px;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-card">
+    <div class="login-logo">⚙️</div>
+    <div class="login-title">لوحة الإدارة</div>
+    <div class="login-sub">دورة الإحصاء</div>
+    <div class="security-badge">🔒 صفحة مخصصة للمدير فقط</div>
+    <div class="error-msg" id="errorMsg">بيانات الدخول غير صحيحة</div>
+    <label>البريد الإلكتروني</label>
+    <input type="email" id="emailInput" placeholder="admin@example.com">
+    <label>كلمة المرور</label>
+    <input type="password" id="passInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-primary" onclick="doLogin()">🔓 دخول لوحة الإدارة</button>
+    <div style="margin-top:14px;text-align:center;font-size:12px;color:var(--muted)">
+      للتجربة: admin@test.com / admin123
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-head">
+        <div class="brand">
+          <div class="brand-icon">⚙️</div>
+          <div><div class="brand-name">لوحة الإدارة</div><div class="brand-sub">دورة الإحصاء</div></div>
+        </div>
+      </div>
+      <div class="sidebar-nav">
+        <div class="nav-section-title">الإدارة</div>
+        <div class="nav-item active" onclick="adminShow('dashboard')"><span class="icon">🏠</span> الرئيسية</div>
+        <div class="nav-item" onclick="adminShow('videos')"><span class="icon">🎬</span> إدارة الفيديوهات</div>
+        <div class="nav-item" onclick="adminShow('units')"><span class="icon">📚</span> إدارة الوحدات</div>
+        <div class="nav-item" onclick="adminShow('students')"><span class="icon">👥</span> الطلاب</div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <div class="avatar-admin">م</div>
+          <div class="user-info">
+            <div class="user-name">المدير</div>
+            <div class="user-role">⚙️ Admin</div>
+          </div>
+          <button class="logout-btn" onclick="doLogout()">⏻</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title" id="adminTopTitle">لوحة التحكم</div>
+          <div class="topbar-sub" id="adminTopSub">نظرة عامة على الدورة</div>
+        </div>
+        <span class="badge-pill badge-warn">🔒 وضع المدير</span>
+      </div>
+      <div class="content">
+
+        <!-- DASHBOARD -->
+        <div id="asec-dashboard">
+          <div class="stat-grid">
+            <div class="stat-card orange"><div class="stat-num" id="statVideos">0</div><div class="stat-label">🎬 فيديوهات</div></div>
+            <div class="stat-card blue"><div class="stat-num" id="statUnits">0</div><div class="stat-label">📚 وحدات</div></div>
+            <div class="stat-card green"><div class="stat-num">2</div><div class="stat-label">👥 طلاب مسجّلون</div></div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px">
+            <div style="font-size:14px;font-weight:700;margin-bottom:16px">⏱ آخر الفيديوهات المضافة</div>
+            <div id="recentVideos"><div class="empty-state"><div class="big-icon">📭</div><p>لا يوجد فيديوهات بعد</p></div></div>
+          </div>
+        </div>
+
+        <!-- VIDEOS -->
+        <div id="asec-videos" style="display:none">
+          <div class="section-header">
+            <div class="section-title" style="margin-bottom:0">🎬 الفيديوهات</div>
+            <button class="btn-sm btn-accent" onclick="openAddVideo()">+ إضافة فيديو</button>
+          </div>
+          <div class="table-wrap"><div id="videosTable"><div class="empty-state"><div class="big-icon">🎬</div><p>اضغط "إضافة فيديو" للبدء</p></div></div></div>
+        </div>
+
+        <!-- UNITS -->
+        <div id="asec-units" style="display:none">
+          <div class="section-header">
+            <div class="section-title" style="margin-bottom:0">📚 الوحدات</div>
+            <button class="btn-sm btn-accent" onclick="openAddUnit()">+ إضافة وحدة</button>
+          </div>
+          <div class="table-wrap"><div id="unitsTable"><div class="empty-state"><div class="big-icon">📚</div><p>اضغط "إضافة وحدة" للبدء</p></div></div></div>
+        </div>
+
+        <!-- STUDENTS -->
+        <div id="asec-students" style="display:none">
+          <div class="section-title">👥 الطلاب المسجّلون</div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>الاسم</th><th>البريد</th><th>الحالة</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600">أحمد محمد</td>
+                  <td style="color:var(--muted)">student@test.com</td>
+                  <td><span class="badge-pill badge-green">نشط</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600">سارة العمري</td>
+                  <td style="color:var(--muted)">demo@test.com</td>
+                  <td><span class="badge-pill badge-green">نشط</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD VIDEO -->
+<div class="modal-overlay" id="modalAddVideo">
+  <div class="modal">
+    <div class="modal-title">🎬 إضافة فيديو جديد</div>
+    <div class="modal-sub">يظهر الفيديو للطلاب فور الحفظ</div>
+    <label>عنوان الدرس *</label>
+    <input type="text" id="vTitle" placeholder="مثال: مقدمة في الإحصاء">
+    <label>الوحدة *</label>
+    <select id="vUnit"><option value="">-- اختر الوحدة --</option></select>
+    <label>رابط الفيديو</label>
+    <input type="text" id="vUrl" placeholder="https://www.youtube.com/watch?v=...">
+    <div class="url-hint">يدعم: YouTube و Vimeo</div>
+    <label>المدة</label>
+    <input type="text" id="vDur" placeholder="مثال: 18 دقيقة">
+    <label>وصف مختصر (اختياري)</label>
+    <textarea id="vDesc" style="height:80px;resize:none" placeholder="ماذا سيتعلم الطالب في هذا الدرس؟"></textarea>
+    <div class="modal-footer">
+      <button class="btn-sm btn-red" onclick="closeModal('modalAddVideo')">إلغاء</button>
+      <button class="btn-sm btn-accent" onclick="saveVideo()">✓ حفظ الفيديو</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ADD UNIT -->
+<div class="modal-overlay" id="modalAddUnit">
+  <div class="modal">
+    <div class="modal-title">📚 إضافة وحدة جديدة</div>
+    <div class="modal-sub">الوحدات تنظّم الفيديوهات في أقسام</div>
+    <label>اسم الوحدة *</label>
+    <input type="text" id="uTitle" placeholder="مثال: أساسيات الإحصاء">
+    <label>وصف (اختياري)</label>
+    <textarea id="uDesc" style="height:80px;resize:none" placeholder="ما الذي تغطيه هذه الوحدة؟"></textarea>
+    <div class="modal-footer">
+      <button class="btn-sm btn-red" onclick="closeModal('modalAddUnit')">إلغاء</button>
+      <button class="btn-sm btn-accent" onclick="saveUnit()">✓ حفظ الوحدة</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== بيانات المدير =====
+const ADMINS = [
+  { email:'admin@test.com', pass:'admin123' },
+];
+
+let units = [
+  { id:1, title:'الوحدة الأولى: أساسيات الإحصاء' },
+  { id:2, title:'الوحدة الثانية: مقاييس النزعة المركزية' },
+];
+let videos = [
+  { id:1, unitId:1, title:'مقدمة في الإحصاء',     url:'', dur:'18 دقيقة', desc:'' },
+  { id:2, unitId:1, title:'أنواع البيانات',         url:'', dur:'16 دقيقة', desc:'' },
+  { id:3, unitId:1, title:'جمع البيانات وتنظيمها', url:'', dur:'18 دقيقة', desc:'' },
+  { id:4, unitId:2, title:'الوسط الحسابي',          url:'', dur:'20 دقيقة', desc:'' },
+];
+let nextUnitId=3, nextVideoId=5;
+
+function doLogin(){
+  const email=document.getElementById('emailInput').value.trim();
+  const pass=document.getElementById('passInput').value;
+  const found=ADMINS.find(a=>a.email===email&&a.pass===pass);
+  if(found){
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('adminApp').style.display='block';
+    document.getElementById('errorMsg').style.display='none';
+    refreshAll();
+  } else {
+    document.getElementById('errorMsg').style.display='block';
+  }
+}
+
+function doLogout(){
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('adminApp').style.display='none';
+  document.getElementById('emailInput').value='';
+  document.getElementById('passInput').value='';
+}
+
+function adminShow(name){
+  ['dashboard','videos','units','students'].forEach(s=>document.getElementById('asec-'+s).style.display=s===name?'block':'none');
+  document.querySelectorAll('.nav-item').forEach((el,i)=>el.classList.toggle('active',['dashboard','videos','units','students'][i]===name));
+  const t={dashboard:'لوحة التحكم',videos:'إدارة الفيديوهات',units:'إدارة الوحدات',students:'الطلاب'};
+  const s={dashboard:'نظرة عامة على الدورة',videos:'أضف وعدّل الفيديوهات',units:'أضف وعدّل الوحدات',students:'قائمة الطلاب المسجّلين'};
+  document.getElementById('adminTopTitle').textContent=t[name];
+  document.getElementById('adminTopSub').textContent=s[name];
+}
+
+function refreshAll(){
+  document.getElementById('statVideos').textContent=videos.length;
+  document.getElementById('statUnits').textContent=units.length;
+  // recent
+  const rv=document.getElementById('recentVideos');
+  if(!videos.length){ rv.innerHTML='<div class="empty-state"><div class="big-icon">📭</div><p>لا يوجد فيديوهات بعد</p></div>'; }
+  else {
+    let html='<table class="data-table"><thead><tr><th>العنوان</th><th>الوحدة</th><th>المدة</th><th>رابط</th></tr></thead><tbody>';
+    [...videos].reverse().slice(0,5).forEach(v=>{
+      const u=units.find(u=>u.id===v.unitId);
+      html+=`<tr><td><b>${v.title}</b></td><td style="color:var(--muted);font-size:13px">${u?u.title:'-'}</td><td style="color:var(--muted)">${v.dur||'-'}</td><td>${v.url?`<a href="${v.url}" target="_blank" style="color:var(--blue);font-size:13px">🔗</a>`:'<span style="color:var(--muted)">-</span>'}</td></tr>`;
+    });
+    html+='</tbody></table>';
+    rv.innerHTML=html;
+  }
+  renderVideosTable();
+  renderUnitsTable();
+}
+
+function renderVideosTable(){
+  const el=document.getElementById('videosTable');
+  if(!videos.length){ el.innerHTML='<div class="empty-state"><div class="big-icon">🎬</div><p>اضغط "إضافة فيديو" للبدء</p></div>'; return; }
+  let html='<table class="data-table"><thead><tr><th>#</th><th>العنوان</th><th>الوحدة</th><th>المدة</th><th>رابط</th><th>حذف</th></tr></thead><tbody>';
+  videos.forEach((v,i)=>{
+    const u=units.find(u=>u.id===v.unitId);
+    html+=`<tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td><b>${v.title}</b></td>
+      <td style="color:var(--muted);font-size:13px">${u?u.title:'-'}</td>
+      <td style="color:var(--muted)">${v.dur||'-'}</td>
+      <td>${v.url?`<a href="${v.url}" target="_blank" style="color:var(--blue);font-size:13px">🔗 رابط</a>`:'<span style="color:var(--muted);font-size:13px">لا يوجد</span>'}</td>
+      <td><button class="btn-sm btn-red" onclick="deleteVideo(${v.id})">حذف</button></td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  el.innerHTML=html;
+}
+
+function renderUnitsTable(){
+  const el=document.getElementById('unitsTable');
+  if(!units.length){ el.innerHTML='<div class="empty-state"><div class="big-icon">📚</div><p>اضغط "إضافة وحدة" للبدء</p></div>'; return; }
+  let html='<table class="data-table"><thead><tr><th>#</th><th>اسم الوحدة</th><th>عدد الفيديوهات</th><th>حذف</th></tr></thead><tbody>';
+  units.forEach((u,i)=>{
+    const c=videos.filter(v=>v.unitId===u.id).length;
+    html+=`<tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td><b>${u.title}</b></td>
+      <td><span class="badge-pill badge-blue">${c} فيديو</span></td>
+      <td><button class="btn-sm btn-red" onclick="deleteUnit(${u.id})">حذف</button></td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  el.innerHTML=html;
+}
+
+function openAddVideo(){
+  const sel=document.getElementById('vUnit');
+  sel.innerHTML='<option value="">-- اختر الوحدة --</option>';
+  units.forEach(u=>sel.innerHTML+=`<option value="${u.id}">${u.title}</option>`);
+  ['vTitle','vUrl','vDur','vDesc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('modalAddVideo').classList.add('open');
+}
+
+function saveVideo(){
+  const title=document.getElementById('vTitle').value.trim();
+  const unitId=parseInt(document.getElementById('vUnit').value);
+  if(!title){alert('أدخل عنوان الدرس');return;}
+  if(!unitId){alert('اختر الوحدة');return;}
+  const url=document.getElementById('vUrl').value.trim();
+  const dur=document.getElementById('vDur').value.trim();
+  const desc=document.getElementById('vDesc').value.trim();
+  videos.push({id:nextVideoId++,unitId,title,url,dur,desc});
+  closeModal('modalAddVideo');
+  refreshAll();
+  showToast('✓ تم إضافة الفيديو بنجاح');
+}
+
+function deleteVideo(id){
+  if(!confirm('هل تريد حذف هذا الفيديو؟'))return;
+  videos=videos.filter(v=>v.id!==id);
+  refreshAll();
+  showToast('تم حذف الفيديو');
+}
+
+function openAddUnit(){
+  ['uTitle','uDesc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('modalAddUnit').classList.add('open');
+}
+
+function saveUnit(){
+  const title=document.getElementById('uTitle').value.trim();
+  if(!title){alert('أدخل اسم الوحدة');return;}
+  const desc=document.getElementById('uDesc').value.trim();
+  units.push({id:nextUnitId++,title,desc});
+  closeModal('modalAddUnit');
+  refreshAll();
+  showToast('✓ تم إضافة الوحدة بنجاح');
+}
+
+function deleteUnit(id){
+  const c=videos.filter(v=>v.unitId===id).length;
+  if(c>0){alert(`لا يمكن الحذف — الوحدة تحتوي على ${c} فيديو`);return;}
+  if(!confirm('حذف هذه الوحدة؟'))return;
+  units=units.filter(u=>u.id!==id);
+  refreshAll();
+  showToast('تم حذف الوحدة');
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+refreshAll();
+</script>
+</body>
+</html>

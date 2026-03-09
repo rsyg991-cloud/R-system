@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دورة الإحصاء — منصة الطلاب</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f1117; --surface:#181c27; --card:#1e2333; --border:#2a3050;
+    --accent:#4f8ef7; --accent2:#6ee7b7; --text:#e8eaf6; --muted:#7b82a8;
+    --danger:#f87171; --warn:#f59e0b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;direction:rtl;}
+
+  /* LOGIN */
+  #loginPage{display:flex;align-items:center;justify-content:center;min-height:100vh;background:radial-gradient(ellipse at 60% 30%,#1a2a4a,#0f1117 70%);}
+  .login-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:48px 44px;width:100%;max-width:420px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:fadeUp .5s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .login-logo{width:64px;height:64px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px;}
+  .login-title{text-align:center;font-size:24px;font-weight:700;margin-bottom:6px;}
+  .login-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:28px;}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;font-weight:500;}
+  input[type=email],input[type=password],input[type=text],select,textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:15px;padding:12px 16px;margin-bottom:16px;outline:none;transition:border-color .2s;direction:rtl;}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+  select option{background:var(--surface);}
+  .btn-primary{width:100%;background:linear-gradient(135deg,var(--accent),#3a6ed4);color:#fff;border:none;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;padding:14px;cursor:pointer;transition:opacity .2s,transform .1s;margin-top:4px;}
+  .btn-primary:hover{opacity:.9;transform:translateY(-1px);}
+  .btn-sm{padding:8px 18px;font-size:13px;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-family:'Tajawal',sans-serif;transition:all .15s;}
+  .btn-red{background:rgba(248,113,113,.1);color:var(--danger);border:1px solid rgba(248,113,113,.25);}
+  .error-msg{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--danger);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none;}
+
+  /* LAYOUT */
+  #app{display:none;}
+  .layout{display:flex;min-height:100vh;}
+  .sidebar{width:260px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;position:fixed;right:0;top:0;bottom:0;z-index:10;}
+  .sidebar-head{padding:24px 20px 16px;border-bottom:1px solid var(--border);}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .brand-name{font-weight:700;font-size:16px;}
+  .brand-sub{font-size:11px;color:var(--muted);}
+  .sidebar-nav{flex:1;padding:14px 12px;overflow-y:auto;}
+  .nav-section-title{font-size:11px;color:var(--muted);letter-spacing:.08em;padding:10px 8px 6px;font-weight:700;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;font-size:14px;color:var(--muted);transition:all .15s;margin-bottom:2px;}
+  .nav-item:hover{background:var(--card);color:var(--text);}
+  .nav-item.active{background:rgba(79,142,247,.12);color:var(--accent);font-weight:600;}
+  .nav-item .icon{font-size:16px;width:20px;text-align:center;}
+  .sidebar-footer{padding:14px;border-top:1px solid var(--border);}
+  .user-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border-radius:10px;}
+  .avatar{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;}
+  .user-info{flex:1;}
+  .user-name{font-size:13px;font-weight:600;}
+  .user-role{font-size:11px;color:var(--muted);}
+  .logout-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;transition:color .2s;}
+  .logout-btn:hover{color:var(--danger);}
+  .main{margin-right:260px;flex:1;}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;}
+  .topbar-title{font-size:18px;font-weight:700;}
+  .topbar-sub{font-size:13px;color:var(--muted);}
+  .badge-pill{border-radius:20px;padding:5px 14px;font-size:13px;font-weight:600;}
+  .badge-green{background:rgba(110,231,183,.1);color:var(--accent2);border:1px solid rgba(110,231,183,.25);}
+  .badge-blue{background:rgba(79,142,247,.1);color:var(--accent);border:1px solid rgba(79,142,247,.25);}
+  .content{padding:28px;}
+
+  /* VIDEO */
+  .video-container{background:#000;border-radius:14px;overflow:hidden;aspect-ratio:16/9;position:relative;margin-bottom:20px;border:1px solid var(--border);}
+  .video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d1b2e,#1a2540);gap:14px;}
+  .play-btn{width:70px;height:70px;background:rgba(79,142,247,.2);border:2px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:24px;}
+  .play-btn:hover{background:rgba(79,142,247,.4);transform:scale(1.05);}
+  .video-title-overlay{font-size:16px;font-weight:600;color:#fff;}
+  .video-dur{font-size:13px;color:var(--muted);}
+  .video-info{margin-bottom:28px;}
+  .video-info h2{font-size:20px;font-weight:700;margin-bottom:6px;}
+  .video-meta{display:flex;gap:16px;color:var(--muted);font-size:13px;}
+  .section-title{font-size:16px;font-weight:700;margin-bottom:14px;}
+  .lessons-grid{display:flex;flex-direction:column;gap:8px;}
+  .lesson-card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .15s;}
+  .lesson-card:hover{border-color:var(--accent);background:rgba(79,142,247,.04);}
+  .lesson-card.active{border-color:var(--accent);background:rgba(79,142,247,.08);}
+  .lesson-num{width:36px;height:36px;background:var(--surface);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--muted);flex-shrink:0;}
+  .lesson-card.active .lesson-num{background:var(--accent);color:#fff;}
+  .lesson-info{flex:1;}
+  .lesson-name{font-size:14px;font-weight:600;margin-bottom:2px;}
+  .lesson-dur{font-size:12px;color:var(--muted);}
+  .lesson-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;background:rgba(255,255,255,.05);color:var(--muted);}
+  .unit-header{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--surface);border-radius:11px;margin-bottom:8px;border:1px solid var(--border);cursor:pointer;}
+  .unit-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .unit-title-txt{font-weight:700;font-size:14px;}
+  .unit-count{font-size:12px;color:var(--muted);}
+  .unit-arrow{margin-right:auto;color:var(--muted);font-size:12px;}
+  .unit-content{padding-right:10px;margin-bottom:16px;}
+  .prog-bar-wrap{background:var(--surface);border-radius:4px;height:5px;margin-top:8px;overflow:hidden;}
+  .prog-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;}
+  .empty-state{text-align:center;padding:48px 20px;color:var(--muted);}
+  .empty-state .big-icon{font-size:44px;margin-bottom:12px;}
+  .empty-state p{font-size:14px;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--accent2);color:#0a2a1a;padding:12px 26px;border-radius:10px;font-weight:700;font-size:14px;z-index:200;transition:transform .3s ease;pointer-events:none;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-card">
+    <div class="login-logo">📊</div>
+    <div class="login-title">دورة الإحصاء</div>
+    <div class="login-sub">سجّل دخولك للوصول إلى المحتوى</div>
+    <div class="error-msg" id="errorMsg">البريد الإلكتروني أو كلمة المرور غير صحيحة</div>
+    <label>البريد الإلكتروني</label>
+    <input type="email" id="emailInput" placeholder="example@email.com">
+    <label>كلمة المرور</label>
+    <input type="password" id="passInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-primary" onclick="doLogin()">دخول</button>
+    <div style="margin-top:16px;text-align:center;font-size:12px;color:var(--muted)">
+      للتجربة: student@test.com / 123456
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="layout">
+    <div class="sidebar">
+      <div class="sidebar-head">
+        <div class="brand">
+          <div class="brand-icon">📊</div>
+          <div><div class="brand-name">دورة الإحصاء</div><div class="brand-sub">المنصة التعليمية</div></div>
+        </div>
+        <div class="prog-bar-wrap"><div class="prog-bar" style="width:0%"></div></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">التقدم: 0%</div>
+      </div>
+      <div class="sidebar-nav">
+        <div class="nav-section-title">القائمة</div>
+        <div class="nav-item active" onclick="showSection('videos')"><span class="icon">🎬</span> المحتوى</div>
+        <div class="nav-item" onclick="showSection('progress')"><span class="icon">📈</span> تقدّمي</div>
+        <div class="nav-item" onclick="showSection('notes')"><span class="icon">📝</span> ملاحظاتي</div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <div class="avatar" id="avatarLetter">أ</div>
+          <div class="user-info">
+            <div class="user-name" id="sidebarName">الطالب</div>
+            <div class="user-role">طالب مسجّل</div>
+          </div>
+          <button class="logout-btn" onclick="doLogout()">⏻</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title" id="topbarTitle">المحتوى التعليمي</div>
+          <div class="topbar-sub" id="currentLesson">اختر درساً للبدء</div>
+        </div>
+        <div class="badge-pill badge-green" id="lessonCountBadge">0 دروس</div>
+      </div>
+      <div class="content">
+
+        <div id="sec-videos">
+          <div class="video-container">
+            <div class="video-placeholder" id="videoPlaceholder">
+              <div class="play-btn" onclick="playCurrentVideo()">▶</div>
+              <div class="video-title-overlay" id="playerTitle">اختر درساً من القائمة</div>
+              <div class="video-dur" id="playerDur"></div>
+            </div>
+            <iframe id="videoFrame" style="display:none;width:100%;height:100%;border:none;" allowfullscreen></iframe>
+          </div>
+          <div class="video-info">
+            <h2 id="videoMainTitle">اختر درساً للبدء</h2>
+            <div class="video-meta" id="videoMeta"><span style="color:var(--muted)">اضغط على أي درس من القائمة أدناه</span></div>
+          </div>
+          <div class="section-title">📚 محتوى الدورة</div>
+          <div id="studentLessonsList"></div>
+        </div>
+
+        <div id="sec-progress" style="display:none">
+          <div class="section-title">📈 تقدّمي في الدورة</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+              <div style="font-size:30px;font-weight:900;color:var(--accent)" id="pDoneCount">0</div>
+              <div style="font-size:13px;color:var(--muted);margin-top:4px">دروس مشاهدة</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+              <div style="font-size:30px;font-weight:900;color:var(--accent2)" id="pPercent">0%</div>
+              <div style="font-size:13px;color:var(--muted);margin-top:4px">نسبة الإتمام</div>
+            </div>
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+              <div style="font-size:30px;font-weight:900;color:var(--warn)" id="pTotal">0</div>
+              <div style="font-size:13px;color:var(--muted);margin-top:4px">إجمالي الدروس</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="sec-notes" style="display:none">
+          <div class="section-title">📝 ملاحظاتي</div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+            <textarea style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:14px;padding:14px;outline:none;resize:vertical;min-height:200px;line-height:1.8" placeholder="اكتب ملاحظاتك هنا..."></textarea>
+            <button class="btn-primary" style="margin-top:12px;width:auto;padding:10px 24px" onclick="showToast('تم حفظ الملاحظات ✓')">حفظ الملاحظات</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== يمكن تعديل الطلاب من هنا =====
+const STUDENTS = [
+  { email:'student@test.com', pass:'123456', name:'أحمد محمد' },
+  { email:'demo@test.com',    pass:'123456', name:'سارة العمري' },
+];
+
+// ===== البيانات — تأتي من المدير (يمكن ربطها بقاعدة بيانات) =====
+let units = [
+  { id:1, title:'الوحدة الأولى: أساسيات الإحصاء' },
+  { id:2, title:'الوحدة الثانية: مقاييس النزعة المركزية' },
+];
+let videos = [
+  { id:1, unitId:1, title:'مقدمة في الإحصاء',        url:'', dur:'18 دقيقة' },
+  { id:2, unitId:1, title:'أنواع البيانات',            url:'', dur:'16 دقيقة' },
+  { id:3, unitId:1, title:'جمع البيانات وتنظيمها',    url:'', dur:'18 دقيقة' },
+  { id:4, unitId:2, title:'الوسط الحسابي',             url:'', dur:'20 دقيقة' },
+];
+
+let currentVideoId = null;
+
+function doLogin(){
+  const email = document.getElementById('emailInput').value.trim();
+  const pass  = document.getElementById('passInput').value;
+  const found = STUDENTS.find(s => s.email===email && s.pass===pass);
+  if(found){
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('sidebarName').textContent = found.name;
+    document.getElementById('avatarLetter').textContent = found.name[0];
+    document.getElementById('errorMsg').style.display = 'none';
+    renderLessons();
+  } else {
+    document.getElementById('errorMsg').style.display = 'block';
+  }
+}
+
+function doLogout(){
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('errorMsg').style.display = 'none';
+  document.getElementById('emailInput').value = '';
+  document.getElementById('passInput').value = '';
+  currentVideoId = null;
+}
+
+function renderLessons(){
+  const c = document.getElementById('studentLessonsList');
+  document.getElementById('lessonCountBadge').textContent = videos.length + ' دروس';
+  document.getElementById('pTotal').textContent = videos.length;
+  const emojis = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
+  if(!units.length){ c.innerHTML='<div class="empty-state"><div class="big-icon">📭</div><p>لا يوجد محتوى بعد</p></div>'; return; }
+  let html = '';
+  units.forEach((unit,ui) => {
+    const uvids = videos.filter(v => v.unitId===unit.id);
+    html += `<div class="unit-header" onclick="toggleUnit(${unit.id})">
+      <div class="unit-icon">${emojis[ui]||'📁'}</div>
+      <div><div class="unit-title-txt">${unit.title}</div><div class="unit-count">${uvids.length} درس</div></div>
+      <div class="unit-arrow" id="sarr${unit.id}">▼</div>
+    </div>
+    <div class="unit-content" id="su${unit.id}"><div class="lessons-grid">`;
+    if(!uvids.length) html += `<div style="padding:12px;color:var(--muted);font-size:13px">لا يوجد دروس في هذه الوحدة بعد</div>`;
+    uvids.forEach((v,i) => {
+      html += `<div class="lesson-card${currentVideoId===v.id?' active':''}" onclick="selectVideo(${v.id})">
+        <div class="lesson-num">${currentVideoId===v.id?'▶':(i+1)}</div>
+        <div class="lesson-info"><div class="lesson-name">${v.title}</div><div class="lesson-dur">${v.dur||''}</div></div>
+        <span class="lesson-badge">${v.url?'🔗':'📹'}</span>
+      </div>`;
+    });
+    html += `</div></div>`;
+  });
+  c.innerHTML = html;
+}
+
+function toggleUnit(id){
+  const el=document.getElementById('su'+id), ar=document.getElementById('sarr'+id);
+  const open = el.style.display!=='none';
+  el.style.display = open?'none':'block';
+  ar.textContent = open?'▶':'▼';
+}
+
+function selectVideo(id){
+  const v = videos.find(x=>x.id===id); if(!v)return;
+  currentVideoId = id;
+  document.getElementById('playerTitle').textContent = v.title;
+  document.getElementById('playerDur').textContent = v.dur||'';
+  document.getElementById('videoMainTitle').textContent = v.title;
+  const unit = units.find(u=>u.id===v.unitId);
+  document.getElementById('videoMeta').innerHTML = `<span>${unit?unit.title:''}</span>${v.dur?`<span style="color:var(--border)">·</span><span>${v.dur}</span>`:''}`;
+  document.getElementById('currentLesson').textContent = 'الدرس الحالي: '+v.title;
+  const frame=document.getElementById('videoFrame'), ph=document.getElementById('videoPlaceholder');
+  const embed = v.url ? getEmbed(v.url) : null;
+  if(embed){ frame.src=embed; frame.style.display='block'; ph.style.display='none'; }
+  else { frame.style.display='none'; ph.style.display='flex'; }
+  renderLessons();
+}
+
+function playCurrentVideo(){
+  if(!currentVideoId){ showToast('اختر درساً أولاً'); return; }
+  const v = videos.find(x=>x.id===currentVideoId);
+  if(v&&v.url) selectVideo(currentVideoId);
+  else showToast('لا يوجد رابط فيديو لهذا الدرس');
+}
+
+function getEmbed(url){
+  try{
+    const u=new URL(url);
+    if(u.hostname.includes('youtube.com')){ const id=u.searchParams.get('v'); return id?`https://www.youtube.com/embed/${id}?autoplay=1`:null; }
+    if(u.hostname.includes('youtu.be')) return `https://www.youtube.com/embed${u.pathname}?autoplay=1`;
+    if(u.hostname.includes('vimeo.com')) return `https://player.vimeo.com/video${u.pathname}?autoplay=1`;
+  }catch(e){}
+  return null;
+}
+
+function showSection(name){
+  ['videos','progress','notes'].forEach(s=>document.getElementById('sec-'+s).style.display=s===name?'block':'none');
+  document.querySelectorAll('.nav-item').forEach((el,i)=>el.classList.toggle('active',['videos','progress','notes'][i]===name));
+  document.getElementById('topbarTitle').textContent={videos:'المحتوى التعليمي',progress:'تقدّمي',notes:'ملاحظاتي'}[name];
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+renderLessons();
+</script>
+</body>
+</html>
